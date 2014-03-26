@@ -34,14 +34,30 @@ def getNumOfBrandOfSubmitTXT(rpath,precision = 0.0437, recall = 0.0819):
 	print("The number of Recommend Brand is : %d \
 		The total numbetr of real bought: %d" %(lenOfBrand , totalNumOfRealBuy))
 	fr.close()
+#计算其他人提交的Brand总数
+def calcNumOfOthersBrand(rank,P,R):
+	Y=(R*3532)/P
+	print("The submit number of Top%d is %d: " %(rank,Y))
+def dipNumOfOthersBrand():
+	calcNumOfOthersBrand(1,0.0747,0.0689)
+	calcNumOfOthersBrand(2,0.0809,0.0607)
+	calcNumOfOthersBrand(3,0.0816,0.0601)
+	calcNumOfOthersBrand(4,0.0751,0.0629)
+	calcNumOfOthersBrand(5,0.0944,0.0536)
+	calcNumOfOthersBrand(6,0.0683,0.0683)
+	calcNumOfOthersBrand(7,0.0830,0.0570)
+	calcNumOfOthersBrand(8,0.0701,0.0649)
+	calcNumOfOthersBrand(9,0.0680,0.0661)
+	calcNumOfOthersBrand(10,0.1068,0.0488)
 
 #删除所有BrandID中仅仅被点击了，但是没有被收藏、购物车和购买的BrandID
 def delNotPurchasedBrandInDemo() :
 	numOfNotPurchased = 0
 	flagDispComma = 0  #控制是否显示第一个brand前面的逗号
 	notPurchasedBrand = np.load("notPurchasedBrand.npy")
-	print("The number of notPurchasedBrand:%d " %(len(notPurchasedBrand)))
+	#print("The number of notPurchasedBrand:%d " %(len(notPurchasedBrand)))
 	rpath = "demo_322.txt"
+	# rpath = "demo-jyc322.txt"
 	wpath = "demo_322_del_brand.txt"
 	fr = open(rpath,"r")
 	fw = open(wpath,"w")
@@ -62,11 +78,14 @@ def delNotPurchasedBrandInDemo() :
 				numOfNotPurchased += 1
 		flagDispComma = 0
 		fw.write("\n")
-	print("There are %d in notPurchasedBrand. \n" %numOfNotPurchased) 	
 	fr.close()
 	fw.close()
+	#print("There are %d in notPurchasedBrand. \n" %numOfNotPurchased) 	
+	print("demo-jyc322.txt : ")
+	getNumOfBrandOfSubmitTXT(rpath)
+	print("demo_322_del_brand.txt : ")
 	#getNumOfBrandOfSubmitTXT(wpath)
-
+'''
 	X=289.;	Y=5940.-497. ;	Z=3532.
 	P=X/Y ; 	R=X/Z
 	F1=(2.*P*R)/(P+R)
@@ -78,23 +97,7 @@ def delNotPurchasedBrandInDemo() :
 	F1=(2.*P*R)/(P+R)
 	print F1
 	print "\n"	
-
-#计算其他人提交的Brand总数
-def calcNumOfOthersBrand(rank,P,R):
-	Y=(R*3532)/P
-	print("The submit number of Top%d is %d: " %(rank,Y))
-def dipNumOfOthersBrand():
-	calcNumOfOthersBrand(1,0.0747,0.0689)
-	calcNumOfOthersBrand(2,0.0809,0.0607)
-	calcNumOfOthersBrand(3,0.0816,0.0601)
-	calcNumOfOthersBrand(4,0.0751,0.0629)
-	calcNumOfOthersBrand(5,0.0944,0.0536)
-	calcNumOfOthersBrand(6,0.0683,0.0683)
-	calcNumOfOthersBrand(7,0.0830,0.0570)
-	calcNumOfOthersBrand(8,0.0701,0.0649)
-	calcNumOfOthersBrand(9,0.0680,0.0661)
-	calcNumOfOthersBrand(10,0.1068,0.0488)
-
+'''
 #删除没有购买记录或者不会再购买的用户的所有数据
 def delUserOfNotPurchase():
 	numOfNotPurchasedUser = 0
@@ -112,9 +115,9 @@ def delUserOfNotPurchase():
 			fw.write(line)
 	fr.close()
 	fw.close()
-	print("There are %d in NotPurchasedUser. \n" %numOfNotPurchasedUser) 	
+	print("There are %d in NotPurchasedUser. \n" %numOfNotPurchasedUser) 
+	print("delUserOfNotPurchase() done. demo_322_del_brand_user.txt : ")	
 	getNumOfBrandOfSubmitTXT(wpath)
-
 
 '''
 @jyc
@@ -122,8 +125,8 @@ def delUserOfNotPurchase():
 1、删除这五月购买次数少于1的user；
 2、根据用户这五个月的购买次数进行推荐，设五个月的购买次数为N则：
 	N < 0.2     : 删除此用户；
-	0.2 < N < 1 : modifyTimes*3(去尾)
-	1 < N < 3   : modifyTimes*2
+	0.2 < N < 1 : modifyTimes*3(去尾) 
+	1 < N < 3   : modifyTimes*2 
 	3 < N < 5   : 取modifyTimes=5
 	N > 5       : modifyTimes=10  
 '''
@@ -159,7 +162,7 @@ def  delOverBrand():
 					flagDispComma = 0
 	fr.close()
 	fw.close()
-	print("Done")
+	print("delOverBrand done. demo_322_del_brand_user_overbrand.txt :")
 	getNumOfBrandOfSubmitTXT(wpath)
 	
 '''
@@ -174,7 +177,7 @@ def addSaveCartButNotPurchase() :
 	userIDTemp=0
 	saveCartButNotPurchase = np.load("saveCartButNotPurchase.npy")
 	notPurchasedUser = np.load("notOnePurchaseUser.npy")  #用于将没有购买行为，但是购物车有物品的user删除
-	print saveCartButNotPurchase
+	#print saveCartButNotPurchase
 	saveCartButNotPurchase = sorted(saveCartButNotPurchase, key=lambda jj : jj[0], reverse=True) #降序排序
 	#saveCartButNotPurchase = mat(saveCartButNotPurchase)
 	#print saveCartButNotPurchase
@@ -201,7 +204,7 @@ def addSaveCartButNotPurchase() :
 		fw.write("\n")
 		flagDispComma = 0
 	#添加 用户（源文件中没有的用户）加入购物车，但是没有购买的
-	print notPurchasedUser
+	# print notPurchasedUser
 	for user,brand in saveCartButNotPurchase :
 		if user not in userIDAll :
 			if int(user) not in notPurchasedUser :  #只添加有购买行为的用户
@@ -217,8 +220,7 @@ def addSaveCartButNotPurchase() :
 
 	fr.close()
 	fw.close()
-	print("Done")
-	getNumOfBrandOfSubmitTXT(rpath)
+	print("addSaveCartButNotPurchase done. demo_322_del_brand_user_overbrand_addCartBrand.txt :")	
 	getNumOfBrandOfSubmitTXT(wpath)
 
 '''
@@ -251,20 +253,34 @@ def addHotBrand() :
 		flagDispComma = 0
 	fr.close()
 	fw.close()
-	print("Done")
+	print("addHotBrand done. demo_322_del_brand_user_overbrand_addCartBrand-hotBrand.txt : ")
 	getNumOfBrandOfSubmitTXT(wpath)
 
 
 
 
-
-
 if __name__ == '__main__':
-	#delNotPurchasedBrandInDemo()
+
 	#dipNumOfOthersBrand()
-	#delUserOfNotPurchase()
-	#delOverBrand()	
-	getNumOfBrandOfSubmitTXT("demo_322_del_brand_user_overbrand_addCartBrand.txt")
+
+	delNotPurchasedBrandInDemo()
+	delUserOfNotPurchase()
+	delOverBrand()	
 	addSaveCartButNotPurchase()
+
 	# addHotBrand()
 	#selcOnOnePurchaseUser()
+	# calcNumOfOthersBrand(2,P=0.0437,R=0.0136)
+
+
+
+
+
+'''
+#计算F1值
+	X=289.;	Y=5337;	Z=3532.
+	P=X/Y ; 	R=X/Z
+	F1=(2.*P*R)/(P+R)
+	print F1
+	print "\n"	
+'''
