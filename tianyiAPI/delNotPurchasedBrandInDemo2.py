@@ -1,11 +1,27 @@
 # -*- coding: UTF-8 -*-
 import numpy as np
 from numpy import *
+import ali323
 '''
+选出没有购买行为的用户存储为notOnePurchaseUser.npy
+'''
+def selcOnOnePurchaseUser():
+	allMt = load("data.npy")
+	allUser = set(allMt[:,0])
+	print len(set(allMt[:,0]))
+
+	purchaseMt = ali323.getWithParameter(allMt,0 ,0 ,(1,),0 ,0)
+	purcheseUser = set(purchaseMt[:,0])
+	print len(set(purchaseMt[:,0]))
+	notPurchaseUser = allUser.difference(purcheseUser)  #取出allUser不在purcheseUser中的部分
+	print len(notPurchaseUser)
+	print notPurchaseUser
+	np.save("notOnePurchaseUser.npy", list(notPurchaseUser))
+'''
+
 获取用户上传的Demo.txt 文件中的推荐的Brand总数。
 与此同时，计算下个月成交的总记录.
 rpath 为Demo.txt的路径
-
 '''
 def getNumOfBrandOfSubmitTXT(rpath,precision = 0.0437, recall = 0.0819):
 	fr=open(rpath,"r")
@@ -157,7 +173,7 @@ def addSaveCartButNotPurchase() :
 	userIDAll= [] #存放rpath中所有用户的ID
 	userIDTemp=0
 	saveCartButNotPurchase = np.load("saveCartButNotPurchase.npy")
-	notPurchasedUser = np.load("noPurchaseGuy.npy")  #用于将没有购买行为，但是购物车有物品的user删除
+	notPurchasedUser = np.load("notOnePurchaseUser.npy")  #用于将没有购买行为，但是购物车有物品的user删除
 	print saveCartButNotPurchase
 	saveCartButNotPurchase = sorted(saveCartButNotPurchase, key=lambda jj : jj[0], reverse=True) #降序排序
 	#saveCartButNotPurchase = mat(saveCartButNotPurchase)
@@ -239,10 +255,16 @@ def addHotBrand() :
 	getNumOfBrandOfSubmitTXT(wpath)
 
 
+
+
+
+
 if __name__ == '__main__':
 	#delNotPurchasedBrandInDemo()
 	#dipNumOfOthersBrand()
 	#delUserOfNotPurchase()
 	#delOverBrand()	
-	#addSaveCartButNotPurchase()
-	addHotBrand()
+	getNumOfBrandOfSubmitTXT("demo_322_del_brand_user_overbrand_addCartBrand.txt")
+	addSaveCartButNotPurchase()
+	# addHotBrand()
+	#selcOnOnePurchaseUser()
